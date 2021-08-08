@@ -26,18 +26,13 @@ namespace Asteroid
             Height = form.ClientSize.Height;
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             Load();
-            Timer timer = new Timer { Interval = 100 };
+            Timer timer = new Timer { Interval = 50 };
             timer.Start();
             timer.Tick += Timer_Tick;
         }
 
         public static void Draw()
         {
-            Buffer.Graphics.Clear(Color.Black);
-            Buffer.Graphics.DrawRectangle(Pens.White, new Rectangle(100, 100, 200, 200));
-            Buffer.Graphics.FillEllipse(Brushes.Wheat, new Rectangle(100, 100, 200, 200));
-            Buffer.Render();
-
             Buffer.Graphics.Clear(Color.Black);
             foreach (BaseObject obj in objs)
                 obj.Draw();
@@ -55,12 +50,12 @@ namespace Asteroid
         public static void Load()
         {
             objs = new BaseObject[60];
-            for (int i = 0; i < objs.Length / 2; i++)
-                objs[i] = new BaseObject(new Point(rnd.Next(0,800), rnd.Next(0,600)), new Point(i, 0), new Size(7, 7));
-            for (int i = objs.Length/2; i < objs.Length; i++)
-                objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i/4, 0), new Size(5, 5));
-            //for (int i = 0; i < objs.Length; i++)
-                //objs[i] = new BaseObject(new Point(600, i * 20), new Point(-i, -i), new Size(10, 10));
+            for (int i = 0; i < 40; i++)
+                objs[i] = new Kamet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
+            objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));            
+            for (int i = 41; i < objs.Length-1; i++)
+                objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
+            objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
 
         }
 
