@@ -3,7 +3,7 @@
 namespace Asteroid
 {
     class SunBlue:BaseObject
-    {
+    {                                                                                                                                                                                                                                                                                
         public SunBlue(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
         }
@@ -16,7 +16,8 @@ namespace Asteroid
         public override void Update()
         {
             Pos.X = Pos.X - Dir.X;
-            if (Pos.X < -100) Pos.X = Game.Width + Size.Width;
+            if (Pos.X < -100) 
+                Pos.X = Game.Width + Size.Width;
         }
     }
 }

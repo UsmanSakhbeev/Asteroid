@@ -15,7 +15,7 @@ namespace Asteroid
 
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawImage(Properties.Resources.planet2, Pos.X, Pos.Y, Size.Width, Size.Height);
+            Game.Buffer.Graphics.DrawImage(Properties.Resources.planet, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         public override void Update()
