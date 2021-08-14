@@ -16,5 +16,10 @@ namespace Asteroid
         {
             InitializeComponent();
         }
+
+        private void KeyIsDown(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 }

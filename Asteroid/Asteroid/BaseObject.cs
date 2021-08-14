@@ -1,17 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Asteroid
 {
-    class BaseObject
+    abstract class BaseObject : ICollision
     {
         protected Point Pos;
-        protected Point Dir;
-        protected Size Size;
+        private Point _dir;
+        private Size _size;
+
+        /*protected Point Pos
+        {
+            get { return _pos; }
+            set
+            {
+                if (value.X < 0)
+                    throw new BaseObjectException(Pos.X.ToString(), "Incorrect position");
+                else if (value.Y < 0)
+                    throw new BaseObjectException(Pos.Y.ToString(), "Incorrect position");
+                else
+                {
+                    _pos.X = value.X;
+                    _pos.Y = value.Y;
+                    //_pos = value;
+                }
+            }
+        }*/
+        protected Point Dir
+        {
+            get { return _dir; }
+            set { _dir = value; }
+        }
+        protected Size Size
+        {
+            get { return _size; }
+            set
+            {
+                if (value.Width > 250)
+                    throw new BaseObjectException(value.Width.ToString(), "Incorrect Size");
+                else if (value.Height > 250)
+                    throw new BaseObjectException(value.Height.ToString(), "Incorrect Size");
+                else
+                {  
+                    _size = value;
+                }
+            }
+        }
 
         public BaseObject(Point pos, Point dir, Size size)
         {
@@ -20,19 +53,12 @@ namespace Asteroid
             Size = size;
         }
 
-        public virtual void Draw()
-        {
-            Game.Buffer.Graphics.DrawEllipse(Pens.White, Pos.X, Pos.Y, Size.Width, Size.Height);
-        }
+        public abstract void Draw();
 
-        public virtual void Update()
-        {
-            Pos.X = Pos.X + Dir.X;
-            Pos.Y = Pos.Y + Dir.Y;
-            if (Pos.X < 0) Dir.X = -Dir.X;
-            if (Pos.X > Game.Width) Dir.X = -Dir.X;
-            if (Pos.Y < 0) Dir.Y = -Dir.Y;
-            if (Pos.Y > Game.Height) Dir.Y = -Dir.Y;
-        }
+        public abstract void Update();
+
+
+        public bool Collision(ICollision o) => o.Rect.IntersectsWith(this.Rect);
+        public Rectangle Rect => new Rectangle(Pos, Size);
     }
 }
