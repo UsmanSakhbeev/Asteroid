@@ -64,18 +64,19 @@ namespace Asteroid
         public static void Draw()
         {            
             Buffer.Graphics.Clear(Color.Black);
-            foreach (BaseObject obj in objs)
+            foreach (BaseObject obj in _objs)
                 obj.Draw();
             foreach (BaseObject obj in _asteroids)
                 obj.Draw();
             _bullet.Draw();
+            _spaceShip.Draw();
 
             Buffer.Render();
         }
 
         public static void Update()
         {
-            foreach (BaseObject obj in objs)
+            foreach (BaseObject obj in _objs)
                 obj.Update();
             foreach (Asteroid asteroid in _asteroids)
             {
@@ -87,17 +88,18 @@ namespace Asteroid
                     _bullet.Replace();
                 }
             }
-
+            _spaceShip.Update();
             _bullet.Update();
         }
         private static Bullet _bullet;
         private static Asteroid[] _asteroids;
-        public static BaseObject[] objs;
+        private static BaseObject[] _objs;
         private static Random rnd = new Random();
+        private static SpaceShip _spaceShip;
         public static void Load()
         {
             _bullet = new Bullet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(-20, 0), new Size(25, 7));
-
+            _spaceShip = new SpaceShip(new Point(0, _height / 2), new Point(0, 0), new Size(70, 70), 100);
             
             _asteroids = new Asteroid[5];
             for (int i = 0; i <_asteroids.Length; i++)
@@ -106,13 +108,32 @@ namespace Asteroid
                 _asteroids[i] = new Asteroid(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(r/5,r), new Size(r,r));
             }
 
-            objs = new BaseObject[60];
+            _objs = new BaseObject[60];
             for (int i = 0; i < 40; i++)
-                objs[i] = new Kamet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
-            objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));            
-            for (int i = 41; i < objs.Length-1; i++)
-                objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
-            objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
+                _objs[i] = new Kamet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
+            _objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));            
+            for (int i = 41; i < _objs.Length-1; i++)
+                _objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
+            _objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
+        }
+
+        private static string _playerDirection;
+        private static void KeyIsDown(object sender, KeyEventArgs e)
+        {
+            
+            if(e.KeyCode == Keys.Space)
+            {
+
+            }
+            if(e.KeyCode == Keys.W)
+            {
+                System.Media.SystemSounds.Hand.Play();
+                _spaceShip.dir = SpaceShip.direction.Up;
+            }
+            if(e.KeyCode == Keys.S)
+            {
+                _spaceShip.dir = SpaceShip.direction.Down;
+            }
         }
 
         private static void Timer_Tick(object sender, EventArgs e)
