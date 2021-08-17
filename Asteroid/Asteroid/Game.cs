@@ -110,7 +110,7 @@ namespace Asteroid
 
             _objs = new BaseObject[60];
             for (int i = 0; i < 40; i++)
-                _objs[i] = new Kamet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
+                _objs[i] = new Comet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
             _objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));            
             for (int i = 41; i < _objs.Length-1; i++)
                 _objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
