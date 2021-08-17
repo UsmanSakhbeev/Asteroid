@@ -21,10 +21,6 @@ namespace Asteroid
             form.Show();
             Game.Draw();
             Application.Run(form);
-
-            /*Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());*/
         }
     }
 }

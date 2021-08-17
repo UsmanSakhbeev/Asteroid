@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Asteroid
 {
-    class Asteroid:BaseObject, IReplace
+    class Asteroid:BaseObject
     {
         public int Power { get; set; }
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
