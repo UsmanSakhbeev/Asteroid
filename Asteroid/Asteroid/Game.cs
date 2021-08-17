@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -14,8 +10,8 @@ namespace Asteroid
         public static BufferedGraphics Buffer;
         private static int _height;
         private static int _width;
-        public static int Width 
-        { 
+        public static int Width
+        {
             get
             {
                 return _width;
@@ -42,13 +38,12 @@ namespace Asteroid
                     _height = value;
             }
         }
-        
+
         static Game()
         {
         }
         public static void Init(Form form)
         {
-
             Graphics g;
             _context = BufferedGraphicsManager.Current;
             g = form.CreateGraphics();
@@ -56,13 +51,23 @@ namespace Asteroid
             Height = form.ClientSize.Height;
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             Load();
-            Timer timer = new Timer { Interval = 50 };
+            Timer timer = new Timer { Interval = 10 };
             timer.Start();
             timer.Tick += Timer_Tick;
+            form.KeyDown += OnKeyDown;
+            form.KeyUp += OnKeyUp;
+        }
+
+        private static void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.W || e.KeyCode == Keys.S)
+            {
+                _spaceShip.dir = SpaceShip.direction.Straight;
+            }
         }
 
         public static void Draw()
-        {            
+        {
             Buffer.Graphics.Clear(Color.Black);
             foreach (BaseObject obj in _objs)
                 obj.Draw();
@@ -70,7 +75,6 @@ namespace Asteroid
                 obj.Draw();
             _bullet.Draw();
             _spaceShip.Draw();
-
             Buffer.Render();
         }
 
@@ -81,7 +85,7 @@ namespace Asteroid
             foreach (Asteroid asteroid in _asteroids)
             {
                 asteroid.Update();
-                if(asteroid.Collision(_bullet))
+                if (asteroid.Collision(_bullet))
                 {
                     System.Media.SystemSounds.Hand.Play();
                     asteroid.Replace();
@@ -99,39 +103,38 @@ namespace Asteroid
         public static void Load()
         {
             _bullet = new Bullet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(-20, 0), new Size(25, 7));
-            _spaceShip = new SpaceShip(new Point(0, _height / 2), new Point(0, 0), new Size(70, 70), 100);
-            
+            _spaceShip = new SpaceShip(new Point(0, _height / 2), new Point(10, 10), new Size(70, 70), 100);
             _asteroids = new Asteroid[5];
-            for (int i = 0; i <_asteroids.Length; i++)
+
+            for (int i = 0; i < _asteroids.Length; i++)
             {
                 int r = rnd.Next(30, 60);
-                _asteroids[i] = new Asteroid(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(r/5,r), new Size(r,r));
+                _asteroids[i] = new Asteroid(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(r / 5, r), new Size(r, r));
             }
-
             _objs = new BaseObject[60];
             for (int i = 0; i < 40; i++)
-                _objs[i] = new Kamet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
-            _objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));            
-            for (int i = 41; i < _objs.Length-1; i++)
+                _objs[i] = new Comet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(i / 4, 0), new Size(5, 5));
+            _objs[40] = new SunBlue(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(1, 0), new Size(100, 100));
+            for (int i = 41; i < _objs.Length - 1; i++)
                 _objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
             _objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
         }
 
-        private static string _playerDirection;
-        private static void KeyIsDown(object sender, KeyEventArgs e)
+        private static void OnKeyDown(object sender, KeyEventArgs e)
         {
-            
-            if(e.KeyCode == Keys.Space)
+
+            if (e.KeyCode == Keys.Space)
             {
 
             }
-            if(e.KeyCode == Keys.W)
+            if (e.KeyCode == Keys.W)
             {
-                System.Media.SystemSounds.Hand.Play();
+                _spaceShip.Up();
                 _spaceShip.dir = SpaceShip.direction.Up;
             }
-            if(e.KeyCode == Keys.S)
+            if (e.KeyCode == Keys.S)
             {
+                _spaceShip.Down();
                 _spaceShip.dir = SpaceShip.direction.Down;
             }
         }
