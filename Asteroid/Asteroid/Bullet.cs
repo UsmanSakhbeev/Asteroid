@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace Asteroid
 {
-    class Bullet:BaseObject, IReplace
+    class Bullet:BaseObject
     {
         public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {            

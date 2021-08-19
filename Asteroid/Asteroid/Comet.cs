@@ -2,9 +2,9 @@
 
 namespace Asteroid
 {
-    class Kamet: BaseObject
+    class Comet: BaseObject
     {
-        public Kamet(Point pos, Point dir, Size size) : base(pos, dir, size)
+        public Comet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
         }
 
