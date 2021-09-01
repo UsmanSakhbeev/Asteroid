@@ -58,7 +58,11 @@ namespace Asteroid
         public abstract void Update();
 
 
-        public bool Collision(ICollision o) => o.Rect.IntersectsWith(this.Rect);
+        public bool Collision(ICollision o)
+        {
+            return o.Rect.IntersectsWith(this.Rect);
+        }
+
         public Rectangle Rect => new Rectangle(Pos, Size);
     }
 }

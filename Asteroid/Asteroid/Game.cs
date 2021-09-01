@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace Asteroid
 {
+    delegate void scoreCounterDel();
     static class Game
     {
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
         private static int _height;
         private static int _width;
+        public static int score;
+        public static scoreCounterDel ScoreCounterDelegate = ScoreCounter;
         public static int Width
         {
             get
@@ -56,19 +60,25 @@ namespace Asteroid
             timer.Tick += Timer_Tick;
             form.KeyDown += OnKeyDown;
             form.KeyUp += OnKeyUp;
+            score = 0;
         }
         public static void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
             foreach (BaseObject obj in _objs)
                 obj.Draw();
-            foreach (BaseObject obj in _asteroids)
-                obj.Draw();
-            _bullet.Draw();
+            foreach (BaseObject asteroid in _asteroids)
+                asteroid.Draw();
+            foreach (Bullet bullet in _bullets)
+            {
+                bullet.Draw();
+            }
             _spaceShip.Draw();
             Buffer.Render();
+
         }
 
+        private static List<int> _bulletIndex = new List<int>();
         public static void Update()
         {
             foreach (BaseObject obj in _objs)
@@ -76,24 +86,39 @@ namespace Asteroid
             foreach (Asteroid asteroid in _asteroids)
             {
                 asteroid.Update();
-                if (asteroid.Collision(_bullet))
+                foreach (Bullet bullet in _bullets)
                 {
-                    System.Media.SystemSounds.Hand.Play();
-                    asteroid.Replace();
-                    _bullet.Replace();
+                    if (asteroid.Collision(bullet))
+                    {
+                        ScoreCounterDelegate();
+                        asteroid.Replace();
+                        _bulletIndex.Add(_bullets.IndexOf(bullet));
+                        //_bullets.Remove(bullet);
+                    }
+                }
+                foreach (int item in _bulletIndex)
+                {
+                    _bullets.RemoveAt(item);
+                }
+                _bulletIndex.Clear();
+            }
+            if (_bullets.Count>0)
+            {
+                foreach (Bullet bullet in _bullets)
+                {
+                    bullet.Update();
                 }
             }
             _spaceShip.Update();
-            _bullet.Update();
         }
-        private static Bullet _bullet;
         private static Asteroid[] _asteroids;
         private static BaseObject[] _objs;
         private static Random rnd = new Random();
         private static SpaceShip _spaceShip;
+        private static List<Bullet> _bullets;        
         public static void Load()
         {
-            _bullet = new Bullet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(-20, 0), new Size(25, 7));
+            _bullets = new List<Bullet>();
             _spaceShip = new SpaceShip(new Point(0, _height / 2), new Point(10, 10), new Size(70, 70), 100);
             _asteroids = new Asteroid[5];
 
@@ -116,7 +141,10 @@ namespace Asteroid
 
             if (e.KeyCode == Keys.Space)
             {
-
+                Point pos = _spaceShip.giveCoordinates();
+                _bullets.Add(new Bullet(new Point(pos.X+50, pos.Y+32), new Point(15,0), new Size(25, 7)));
+                _bullets[_bullets.Count - 1].Draw();
+                
             }
             if (e.KeyCode == Keys.W)
             {
@@ -141,6 +169,13 @@ namespace Asteroid
         {
             Draw();
             Update();
+        }
+
+        private static void ScoreCounter()
+        {
+            System.Media.SystemSounds.Hand.Play();
+            score++;
+            Console.WriteLine("Вы попали по астероиду {0} раз", score);            
         }
 
     }

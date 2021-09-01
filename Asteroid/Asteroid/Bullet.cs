@@ -20,15 +20,19 @@ namespace Asteroid
 
         public override void Update()
         {
-            Pos.X = Pos.X +10;
+            Pos.X = Pos.X + Dir.X;
             if (Pos.X > 800)
-                Replace();
+                Delete();
         }
-        public void Replace()
+        public void Shot(Point point)
         {
-            Random rnd = new Random();
-            Pos.X = 0;
-            Pos.Y = rnd.Next(100, 800);
+            Pos.X = point.X+50;
+            Pos.Y = point.Y+32;
         }
+        public void Delete()
+        {
+            
+        }
+
     }
 }

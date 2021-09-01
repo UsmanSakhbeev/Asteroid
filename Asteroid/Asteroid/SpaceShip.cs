@@ -58,6 +58,10 @@ namespace Asteroid
                 Pos.Y += Dir.Y;
         }
 
+        public Point giveCoordinates()
+        {
+            return this.Pos;
+        }
 
     }
 }
