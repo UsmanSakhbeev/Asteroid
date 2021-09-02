@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace Asteroid
 {
-    class SpaceShip:BaseObject
+    class SpaceShip : BaseObject
     {
         private int _hitPoints;
-        public enum direction { Up, Down, Straight}
+        public enum direction { Up, Down, Straight }
         public direction dir = direction.Straight;
         public int HitPoints
         {
@@ -17,7 +17,7 @@ namespace Asteroid
                 if (value > 0)
                     _hitPoints = value;
                 else
-                    throw new ArgumentOutOfRangeException(Convert.ToString(value), "SpaceShip hitpoints must be positive");
+                    GameEnding();
             }
         }
         public SpaceShip(Point pos, Point dir, Size size, int hitPoints) : base(pos, dir, size)
@@ -48,20 +48,46 @@ namespace Asteroid
 
         public void Up()
         {
-            if(Pos.Y>=13)
+            if (Pos.Y >= 13)
                 Pos.Y -= Dir.Y;
         }
 
         public void Down()
         {
-            if(Pos.Y<=475)
+            if (Pos.Y <= 475)
                 Pos.Y += Dir.Y;
         }
 
-        public Point giveCoordinates()
+        public Point GiveCoordinates()
         {
             return this.Pos;
         }
 
+        //public void LoverHP(int damage)
+        //{
+        //    HitPoints -= damage;
+        //    Console.WriteLine("SpaceShip HP: " + HitPoints);
+        //}
+
+        //public void IncreaseHP(int heal)
+        //{
+        //    HitPoints += heal;
+        //    Console.WriteLine("SpaceShip HP: " + HitPoints);
+        //}
+
+        public void ChangeHP(int amount)
+        {
+            HitPoints += amount;
+            if (HitPoints > 100)
+                HitPoints = 100;
+            if (HitPoints < 1)
+                GameEnding();
+            Console.WriteLine("SpaceShip HP: " + HitPoints);
+        }
+
+        public void GameEnding()
+        {
+            Console.WriteLine("You are dead inside");
+        }
     }
 }

@@ -12,7 +12,7 @@ namespace Asteroid
         public int Power { get; set; }
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            Power = 1;
+            Power = -20;
         }
 
         public override void Draw()

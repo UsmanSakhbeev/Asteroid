@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.IO;
+
 
 namespace Asteroid
 {
@@ -74,11 +76,12 @@ namespace Asteroid
                 bullet.Draw();
             }
             _spaceShip.Draw();
+            _energyBooster.Draw();
             Buffer.Render();
 
         }
 
-        private static List<int> _bulletIndex = new List<int>();
+        private static List<int> _bulletIndexesToDelete = new List<int>();        
         public static void Update()
         {
             foreach (BaseObject obj in _objs)
@@ -86,40 +89,64 @@ namespace Asteroid
             foreach (Asteroid asteroid in _asteroids)
             {
                 asteroid.Update();
+                if (asteroid.Collision(_spaceShip))
+                {
+                    asteroid.Replace();
+                    _spaceShip.ChangeHP(asteroid.Power);
+                }                    
                 foreach (Bullet bullet in _bullets)
                 {
                     if (asteroid.Collision(bullet))
                     {
                         ScoreCounterDelegate();
                         asteroid.Replace();
-                        _bulletIndex.Add(_bullets.IndexOf(bullet));
-                        //_bullets.Remove(bullet);
+                        _bulletIndexesToDelete.Add(_bullets.IndexOf(bullet));
                     }
                 }
-                foreach (int item in _bulletIndex)
+                foreach (int item in _bulletIndexesToDelete)
                 {
                     _bullets.RemoveAt(item);
                 }
-                _bulletIndex.Clear();
+                _bulletIndexesToDelete.Clear();
             }
-            if (_bullets.Count>0)
+            if (_bullets.Count > 0)
             {
                 foreach (Bullet bullet in _bullets)
                 {
                     bullet.Update();
                 }
+                foreach (Bullet bullet in _bullets)
+                {
+                    if(bullet.IsCornerTouchedChecking())
+                        _bulletIndexesToDelete.Add(_bullets.IndexOf(bullet));
+                }
+                foreach (int item in _bulletIndexesToDelete)
+                {
+                    _bullets.RemoveAt(item);
+                }
+                _bulletIndexesToDelete.Clear();
             }
             _spaceShip.Update();
+            _energyBooster.Update();
+            if (_energyBooster.Collision(_spaceShip))
+            {
+                _spaceShip.ChangeHP(_energyBooster.Power);
+                _energyBooster.Replace();
+            }
+
+            //if(_spaceShip.Collision(as))
         }
         private static Asteroid[] _asteroids;
         private static BaseObject[] _objs;
         private static Random rnd = new Random();
         private static SpaceShip _spaceShip;
-        private static List<Bullet> _bullets;        
+        private static List<Bullet> _bullets;
+        private static EnergyBooster _energyBooster;
         public static void Load()
         {
-            _bullets = new List<Bullet>();
             _spaceShip = new SpaceShip(new Point(0, _height / 2), new Point(10, 10), new Size(70, 70), 100);
+            _bullets = new List<Bullet>();
+            _energyBooster = new EnergyBooster(new Point(800, rnd.Next(50, 450)), new Point(-5, 0), new Size(30, 30));
             _asteroids = new Asteroid[5];
 
             for (int i = 0; i < _asteroids.Length; i++)
@@ -134,6 +161,7 @@ namespace Asteroid
             for (int i = 41; i < _objs.Length - 1; i++)
                 _objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
             _objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
+
         }
 
         private static void OnKeyDown(object sender, KeyEventArgs e)
@@ -141,10 +169,10 @@ namespace Asteroid
 
             if (e.KeyCode == Keys.Space)
             {
-                Point pos = _spaceShip.giveCoordinates();
-                _bullets.Add(new Bullet(new Point(pos.X+50, pos.Y+32), new Point(15,0), new Size(25, 7)));
+                Point pos = _spaceShip.GiveCoordinates();
+                _bullets.Add(new Bullet(new Point(pos.X + 50, pos.Y + 32), new Point(15, 0), new Size(25, 7)));
                 _bullets[_bullets.Count - 1].Draw();
-                
+
             }
             if (e.KeyCode == Keys.W)
             {
@@ -175,7 +203,11 @@ namespace Asteroid
         {
             System.Media.SystemSounds.Hand.Play();
             score++;
-            Console.WriteLine("Вы попали по астероиду {0} раз", score);            
+            Console.WriteLine("Очки: " + score);
+            using (StreamWriter streamWriter = new StreamWriter("output.txt"))
+            {
+                streamWriter.Write("Очки: " + score);
+            }
         }
 
     }

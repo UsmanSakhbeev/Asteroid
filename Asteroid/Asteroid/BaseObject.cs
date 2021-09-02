@@ -36,9 +36,9 @@ namespace Asteroid
             set
             {
                 if (value.Width > 250)
-                    throw new BaseObjectException(value.Width.ToString(), "Incorrect Size");
+                    throw new BaseObjectException(value.Width.ToString(), "Too big size of object");
                 else if (value.Height > 250)
-                    throw new BaseObjectException(value.Height.ToString(), "Incorrect Size");
+                    throw new BaseObjectException(value.Height.ToString(), "Too big size of object");
                 else
                 {  
                     _size = value;

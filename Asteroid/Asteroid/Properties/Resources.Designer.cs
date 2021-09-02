@@ -83,6 +83,16 @@ namespace Asteroid.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap EnergyBooster {
+            get {
+                object obj = ResourceManager.GetObject("EnergyBooster", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap laserBullet {
             get {
                 object obj = ResourceManager.GetObject("laserBullet", resourceCulture);

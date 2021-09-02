@@ -9,8 +9,10 @@ namespace Asteroid
 {
     class Bullet:BaseObject
     {
+        private bool isCornerTouched;
         public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
-        {            
+        {
+            isCornerTouched = false;
         }
 
         public override void Draw()
@@ -22,16 +24,19 @@ namespace Asteroid
         {
             Pos.X = Pos.X + Dir.X;
             if (Pos.X > 800)
-                Delete();
+                isCornerTouched = true;
         }
         public void Shot(Point point)
         {
             Pos.X = point.X+50;
             Pos.Y = point.Y+32;
         }
-        public void Delete()
+        public bool IsCornerTouchedChecking()
         {
-            
+            if (isCornerTouched)
+                return true;
+            else
+                return false;
         }
 
     }
