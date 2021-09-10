@@ -7,12 +7,12 @@ using System.Drawing;
 
 namespace Asteroid
 {
-    class Bullet:BaseObject
+    class Bullet : BaseObject
     {
-        private bool isCornerTouched;
+        private bool _isCornerTouched;
         public Bullet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
-            isCornerTouched = false;
+            _isCornerTouched = false;
         }
 
         public override void Draw()
@@ -24,19 +24,16 @@ namespace Asteroid
         {
             Pos.X = Pos.X + Dir.X;
             if (Pos.X > 800)
-                isCornerTouched = true;
+                _isCornerTouched = true;
         }
         public void Shot(Point point)
         {
-            Pos.X = point.X+50;
-            Pos.Y = point.Y+32;
+            Pos.X = point.X + 50;
+            Pos.Y = point.Y + 32;
         }
         public bool IsCornerTouchedChecking()
         {
-            if (isCornerTouched)
-                return true;
-            else
-                return false;
+            return _isCornerTouched;
         }
 
     }

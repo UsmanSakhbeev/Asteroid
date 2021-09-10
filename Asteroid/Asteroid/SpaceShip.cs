@@ -63,18 +63,6 @@ namespace Asteroid
             return this.Pos;
         }
 
-        //public void LoverHP(int damage)
-        //{
-        //    HitPoints -= damage;
-        //    Console.WriteLine("SpaceShip HP: " + HitPoints);
-        //}
-
-        //public void IncreaseHP(int heal)
-        //{
-        //    HitPoints += heal;
-        //    Console.WriteLine("SpaceShip HP: " + HitPoints);
-        //}
-
         public void ChangeHP(int amount)
         {
             HitPoints += amount;
@@ -88,6 +76,7 @@ namespace Asteroid
         public void GameEnding()
         {
             Console.WriteLine("You are dead inside");
+            Game.isPlayerAlive = false;
         }
     }
 }

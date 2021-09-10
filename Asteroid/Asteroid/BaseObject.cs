@@ -7,7 +7,6 @@ namespace Asteroid
         protected Point Pos;
         private Point _dir;
         private Size _size;
-
         /*protected Point Pos
         {
             get { return _pos; }
@@ -40,7 +39,7 @@ namespace Asteroid
                 else if (value.Height > 250)
                     throw new BaseObjectException(value.Height.ToString(), "Too big size of object");
                 else
-                {  
+                {
                     _size = value;
                 }
             }

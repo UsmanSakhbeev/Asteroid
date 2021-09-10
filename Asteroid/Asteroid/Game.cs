@@ -4,10 +4,9 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.IO;
 
-
 namespace Asteroid
 {
-    delegate void scoreCounterDel();
+    delegate void ScoreCounterDel();
     static class Game
     {
         private static BufferedGraphicsContext _context;
@@ -15,7 +14,10 @@ namespace Asteroid
         private static int _height;
         private static int _width;
         public static int score;
-        public static scoreCounterDel ScoreCounterDelegate = ScoreCounter;
+        public static ScoreCounterDel ScoreCounterDelegate = ScoreCounter;
+        public static bool isPlayerAlive;
+        private static bool сanPlayerShoot;
+        private static Timer bulletCDTimer = new Timer { Interval = 500 };
         public static int Width
         {
             get
@@ -44,12 +46,10 @@ namespace Asteroid
                     _height = value;
             }
         }
-
-        static Game()
-        {
-        }
         public static void Init(Form form)
         {
+            isPlayerAlive = true;
+            сanPlayerShoot = true;
             Graphics g;
             _context = BufferedGraphicsManager.Current;
             g = form.CreateGraphics();
@@ -63,6 +63,8 @@ namespace Asteroid
             form.KeyDown += OnKeyDown;
             form.KeyUp += OnKeyUp;
             score = 0;
+            bulletCDTimer.Tick += BulletCDTimer;
+
         }
         public static void Draw()
         {
@@ -72,16 +74,12 @@ namespace Asteroid
             foreach (BaseObject asteroid in _asteroids)
                 asteroid.Draw();
             foreach (Bullet bullet in _bullets)
-            {
                 bullet.Draw();
-            }
             _spaceShip.Draw();
             _energyBooster.Draw();
             Buffer.Render();
-
         }
-
-        private static List<int> _bulletIndexesToDelete = new List<int>();        
+        private static List<int> _bulletIndexesToDelete = new List<int>();
         public static void Update()
         {
             foreach (BaseObject obj in _objs)
@@ -93,7 +91,7 @@ namespace Asteroid
                 {
                     asteroid.Replace();
                     _spaceShip.ChangeHP(asteroid.Power);
-                }                    
+                }
                 foreach (Bullet bullet in _bullets)
                 {
                     if (asteroid.Collision(bullet))
@@ -104,26 +102,20 @@ namespace Asteroid
                     }
                 }
                 foreach (int item in _bulletIndexesToDelete)
-                {
                     _bullets.RemoveAt(item);
-                }
                 _bulletIndexesToDelete.Clear();
             }
             if (_bullets.Count > 0)
             {
                 foreach (Bullet bullet in _bullets)
-                {
                     bullet.Update();
-                }
                 foreach (Bullet bullet in _bullets)
                 {
-                    if(bullet.IsCornerTouchedChecking())
+                    if (bullet.IsCornerTouchedChecking())
                         _bulletIndexesToDelete.Add(_bullets.IndexOf(bullet));
                 }
                 foreach (int item in _bulletIndexesToDelete)
-                {
                     _bullets.RemoveAt(item);
-                }
                 _bulletIndexesToDelete.Clear();
             }
             _spaceShip.Update();
@@ -133,8 +125,6 @@ namespace Asteroid
                 _spaceShip.ChangeHP(_energyBooster.Power);
                 _energyBooster.Replace();
             }
-
-            //if(_spaceShip.Collision(as))
         }
         private static Asteroid[] _asteroids;
         private static BaseObject[] _objs;
@@ -148,7 +138,6 @@ namespace Asteroid
             _bullets = new List<Bullet>();
             _energyBooster = new EnergyBooster(new Point(800, rnd.Next(50, 450)), new Point(-5, 0), new Size(30, 30));
             _asteroids = new Asteroid[5];
-
             for (int i = 0; i < _asteroids.Length; i++)
             {
                 int r = rnd.Next(30, 60);
@@ -161,18 +150,17 @@ namespace Asteroid
             for (int i = 41; i < _objs.Length - 1; i++)
                 _objs[i] = new Star(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(10, -2 - i / 5), new Size(7, 7));
             _objs[59] = new Planet(new Point(rnd.Next(0, 800), rnd.Next(0, 600)), new Point(2, 0), new Size(200, 200));
-
         }
 
         private static void OnKeyDown(object sender, KeyEventArgs e)
         {
-
-            if (e.KeyCode == Keys.Space)
+            if (e.KeyCode == Keys.Space && сanPlayerShoot)
             {
                 Point pos = _spaceShip.GiveCoordinates();
                 _bullets.Add(new Bullet(new Point(pos.X + 50, pos.Y + 32), new Point(15, 0), new Size(25, 7)));
                 _bullets[_bullets.Count - 1].Draw();
-
+                сanPlayerShoot = false;
+                bulletCDTimer.Start();
             }
             if (e.KeyCode == Keys.W)
             {
@@ -188,17 +176,21 @@ namespace Asteroid
         private static void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.W || e.KeyCode == Keys.S)
-            {
                 _spaceShip.dir = SpaceShip.direction.Straight;
-            }
         }
-
         private static void Timer_Tick(object sender, EventArgs e)
         {
-            Draw();
-            Update();
+            if (isPlayerAlive == true)
+            {
+                Draw();
+                Update();
+            }
         }
-
+        private static void BulletCDTimer(object sender, EventArgs e)
+        {
+            сanPlayerShoot = true;
+            bulletCDTimer.Stop();
+        }
         private static void ScoreCounter()
         {
             System.Media.SystemSounds.Hand.Play();
@@ -209,6 +201,5 @@ namespace Asteroid
                 streamWriter.Write("Очки: " + score);
             }
         }
-
     }
 }
